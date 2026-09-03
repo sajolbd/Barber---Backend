@@ -102,7 +102,21 @@ router.post("/login", async (req, res) => {
       return res.status(403).json({
         success: false,
         status: "Pending Approval",
-        message: "Your application for '" + shop.name + "' is currently Pending Super Admin Approval. You can log in once approved by the platform admin.",
+        message: "Your application for '" + shop.name + "' is currently Pending Super Admin Approval. You can view your status tracker page while awaiting approval.",
+        shop: {
+          shopId: shop.shopId,
+          name: shop.name,
+          ownerName: shop.ownerName,
+          email: shop.email,
+          phone: shop.phone,
+          city: shop.city,
+          address: shop.address,
+          tradeLicenseNumber: shop.tradeLicenseNumber,
+          nidNumber: shop.nidNumber,
+          plan: shop.plan,
+          status: shop.status,
+          dateJoined: shop.createdAt ? shop.createdAt.toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        },
       });
     }
 
@@ -229,6 +243,15 @@ router.patch("/appointments/:bookingId/status", async (req, res) => {
       { new: true }
     );
     res.json({ success: true, appointment: apt });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.delete("/appointments/:bookingId", async (req, res) => {
+  try {
+    await Appointment.findOneAndDelete({ bookingId: req.params.bookingId });
+    res.json({ success: true, message: "Appointment deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

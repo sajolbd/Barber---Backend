@@ -124,66 +124,8 @@ async function seedDatabase() {
     await Shop.insertMany(shops);
     console.log("✓ Seeded Shops.");
 
-    // 2. Seed Appointments
-    const appointments = [
-      {
-        bookingId: "apt-101",
-        customerName: "Tanvir Hossain",
-        customerPhone: "+880 1819-876543",
-        customerEmail: "tanvir@gmail.com",
-        isWalkIn: false,
-        shopId: "barber-elite",
-        branchId: "banani",
-        branchName: "Banani Branch",
-        serviceName: "Executive Precision Cut",
-        barberId: "b1",
-        barberName: "Alexander Ross",
-        date: "2026-09-03",
-        time: "10:30 AM",
-        amount: "$45.00",
-        status: "Confirmed",
-        paymentStatus: "Paid",
-        paymentMethod: "Card",
-      },
-      {
-        bookingId: "apt-102",
-        customerName: "Mahmud Hasan",
-        customerPhone: "+880 1711-223344",
-        customerEmail: "mahmud@gmail.com",
-        isWalkIn: true,
-        shopId: "barber-elite",
-        branchId: "mirpur",
-        branchName: "Mirpur Branch",
-        serviceName: "Beard Sculpting & Trim",
-        barberId: "b2",
-        barberName: "Marcus Vance",
-        date: "2026-09-03",
-        time: "02:15 PM",
-        amount: "$30.00",
-        status: "Pending",
-        paymentStatus: "Pending",
-        paymentMethod: "Cash",
-      },
-      {
-        bookingId: "apt-103",
-        customerName: "Kazi Shafiq",
-        customerPhone: "+880 1922-334455",
-        customerEmail: "shafiq@gmail.com",
-        isWalkIn: false,
-        shopId: "barber-elite",
-        branchId: "gulshan",
-        branchName: "Gulshan Branch",
-        serviceName: "The Elite Master Groom",
-        barberId: "b3",
-        barberName: "Julian Thorne",
-        date: "2026-09-03",
-        time: "04:00 PM",
-        amount: "$95.00",
-        status: "Completed",
-        paymentStatus: "Paid",
-        paymentMethod: "Online",
-      },
-    ];
+    // 2. Seed Appointments (Cleared for fresh start)
+    const appointments = [];
 
     await Appointment.insertMany(appointments);
     console.log("✓ Seeded Appointments.");
