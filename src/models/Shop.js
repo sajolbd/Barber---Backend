@@ -24,6 +24,28 @@ const ShopSchema = new mongoose.Schema(
     totalBookings: { type: Number, default: 0 },
     rating: { type: Number, default: 5.0 },
     dateJoined: { type: String, default: () => new Date().toISOString().split("T")[0] },
+    services: [
+      {
+        id: String,
+        title: String,
+        category: String,
+        duration: String,
+        price: String,
+        active: { type: Boolean, default: true },
+        assignedBarbersCount: { type: Number, default: 0 },
+      },
+    ],
+    packages: [
+      {
+        id: String,
+        title: String,
+        includedServices: [String],
+        duration: String,
+        price: String,
+        originalPrice: String,
+        active: { type: Boolean, default: true },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -65,6 +65,11 @@ async function seedDatabase() {
         platformFeePaid: "$1,450",
         totalBookings: 1840,
         rating: 4.9,
+        services: [
+          { id: "srv-101", title: "Executive Precision Cut", category: "haircut", duration: "45 mins", price: "$45", active: true, assignedBarbersCount: 3 },
+          { id: "srv-102", title: "Beard Sculpting & Trim", category: "beard", duration: "30 mins", price: "$30", active: true, assignedBarbersCount: 2 },
+          { id: "srv-103", title: "Royal Hot Towel Shave", category: "shave", duration: "35 mins", price: "$40", active: true, assignedBarbersCount: 2 },
+        ],
       },
       {
         shopId: "urban-fade-studio",

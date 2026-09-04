@@ -349,4 +349,83 @@ router.get("/customers", async (req, res) => {
   }
 });
 
+// ------------------------------------------------------------------
+// 6. Services & Packages Management
+// ------------------------------------------------------------------
+router.get("/services", async (req, res) => {
+  try {
+    const { shopId } = req.query;
+    const targetShopId = shopId || "barber-elite";
+    const shop = await Shop.findOne({ shopId: targetShopId });
+    if (!shop) return res.status(404).json({ success: false, message: "Shop not found" });
+    res.json({ success: true, services: shop.services || [], packages: shop.packages || [] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post("/services", async (req, res) => {
+  try {
+    const { shopId, service } = req.body;
+    const targetShopId = shopId || "barber-elite";
+    const shop = await Shop.findOne({ shopId: targetShopId });
+    if (!shop) return res.status(404).json({ success: false, message: "Shop not found" });
+
+    if (!shop.services) shop.services = [];
+    shop.services = shop.services.filter((s) => s.id !== service.id);
+    shop.services.unshift(service);
+    await shop.save();
+    res.status(201).json({ success: true, services: shop.services });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.delete("/services/:serviceId", async (req, res) => {
+  try {
+    const { shopId } = req.query;
+    const targetShopId = shopId || "barber-elite";
+    const shop = await Shop.findOne({ shopId: targetShopId });
+    if (!shop) return res.status(404).json({ success: false, message: "Shop not found" });
+
+    shop.services = (shop.services || []).filter((s) => s.id !== req.params.serviceId);
+    await shop.save();
+    res.json({ success: true, services: shop.services });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.post("/packages", async (req, res) => {
+  try {
+    const { shopId, packageItem } = req.body;
+    const targetShopId = shopId || "barber-elite";
+    const shop = await Shop.findOne({ shopId: targetShopId });
+    if (!shop) return res.status(404).json({ success: false, message: "Shop not found" });
+
+    if (!shop.packages) shop.packages = [];
+    shop.packages = shop.packages.filter((p) => p.id !== packageItem.id);
+    shop.packages.unshift(packageItem);
+    await shop.save();
+    res.status(201).json({ success: true, packages: shop.packages });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.delete("/packages/:packageId", async (req, res) => {
+  try {
+    const { shopId } = req.query;
+    const targetShopId = shopId || "barber-elite";
+    const shop = await Shop.findOne({ shopId: targetShopId });
+    if (!shop) return res.status(404).json({ success: false, message: "Shop not found" });
+
+    shop.packages = (shop.packages || []).filter((p) => p.id !== req.params.packageId);
+    await shop.save();
+    res.json({ success: true, packages: shop.packages });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;
