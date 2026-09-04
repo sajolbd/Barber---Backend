@@ -185,35 +185,42 @@ router.get("/appointments", async (req, res) => {
 
 router.post("/appointments", async (req, res) => {
   try {
-    const newApt = new Appointment({
-      bookingId: req.body.id || `apt-${Date.now().toString().slice(-4)}`,
-      customerName: req.body.customerName,
-      customerPhone: req.body.customerPhone,
+    const bookingId = req.body.id || req.body.bookingId || `apt-${Date.now().toString().slice(-4)}`;
+
+    const appointmentData = {
+      bookingId,
+      customerName: req.body.customerName || "Walk-In Customer",
+      customerPhone: req.body.customerPhone || "+880 1700-000000",
       customerEmail: req.body.customerEmail || "walkin@salon.com",
       isWalkIn: req.body.isWalkIn || false,
       shopId: req.body.shopId || "barber-elite",
       branchId: req.body.branchId || "banani",
       branchName: req.body.branchName || "Banani Branch",
-      serviceName: req.body.serviceName,
+      serviceName: req.body.serviceName || "Executive Precision Cut",
       packageName: req.body.packageName || "",
       barberId: req.body.barberId || "b1",
       barberName: req.body.barberName || "Alexander Ross",
-      date: req.body.date || "2026-09-03",
-      time: req.body.time || "02:30 PM",
+      date: req.body.date || new Date().toISOString().split("T")[0],
+      time: req.body.time || "11:30 AM",
       amount: req.body.amount || "$45.00",
       status: req.body.status || "Confirmed",
       paymentStatus: req.body.paymentStatus || "Paid",
       paymentMethod: req.body.paymentMethod || "Cash",
-    });
+      transactionId: req.body.transactionId || "",
+    };
 
-    await newApt.save();
+    const newApt = await Appointment.findOneAndUpdate(
+      { bookingId },
+      appointmentData,
+      { upsert: true, new: true, runValidators: false }
+    );
 
     // Optionally add/update Customer CRM record
     let existingCust = await Customer.findOne({ phone: req.body.customerPhone });
-    if (!existingCust) {
+    if (!existingCust && req.body.customerPhone) {
       existingCust = new Customer({
         customerId: `c-${Date.now().toString().slice(-4)}`,
-        name: req.body.customerName,
+        name: req.body.customerName || "Walk-In Customer",
         phone: req.body.customerPhone,
         email: req.body.customerEmail || "customer@gmail.com",
         preferredBranch: req.body.branchName || "Banani Branch",
@@ -221,15 +228,16 @@ router.post("/appointments", async (req, res) => {
         completedBookings: 1,
         totalSpending: req.body.amount || "$45.00",
       });
-      await existingCust.save();
-    } else {
+      await existingCust.save().catch(() => {});
+    } else if (existingCust) {
       existingCust.totalBookings += 1;
       existingCust.completedBookings += 1;
-      await existingCust.save();
+      await existingCust.save().catch(() => {});
     }
 
     res.status(201).json({ success: true, appointment: newApt });
   } catch (error) {
+    console.error("Error creating appointment:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
