@@ -13,6 +13,8 @@ const ShopSchema = new mongoose.Schema(
     tradeLicenseNumber: { type: String, required: true },
     nidNumber: { type: String, required: true },
     category: { type: String, default: "Barbershop" },
+    tagline: { type: String, default: "Executive Cuts, Beard Styling & Luxury Grooming" },
+    coverImage: { type: String, default: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop" },
     plan: { type: String, enum: ["Starter", "Pro", "Enterprise"], default: "Pro" },
     status: {
       type: String,

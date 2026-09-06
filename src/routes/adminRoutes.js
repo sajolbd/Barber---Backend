@@ -86,7 +86,16 @@ router.get("/overview", async (req, res) => {
 router.get("/pending-approvals", async (req, res) => {
   try {
     const pendingShops = await Shop.find({ status: "Pending Approval" }).sort({ createdAt: -1 });
-    res.json({ success: true, count: pendingShops.length, applications: pendingShops });
+    const formattedApps = pendingShops.map((s) => ({
+      ...s.toObject(),
+      id: s.shopId || s._id,
+      shopName: s.name,
+      requestedPlan: s.plan ? `${s.plan} Plan` : "Pro Plan ($79/mo)",
+      dateSubmitted: s.createdAt ? s.createdAt.toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+      documentsStatus: "Verified",
+    }));
+
+    res.json({ success: true, count: formattedApps.length, applications: formattedApps });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

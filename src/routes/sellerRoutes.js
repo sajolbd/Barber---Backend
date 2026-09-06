@@ -26,7 +26,14 @@ router.post("/register", async (req, res) => {
       tradeLicenseNumber,
       nidNumber,
       requestedPlan,
+      category,
+      tagline,
+      coverImage,
     } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required." });
+    }
 
     // Check if email already registered
     const existingShop = await Shop.findOne({ email: email.toLowerCase() });
@@ -34,8 +41,10 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ success: false, message: "Email is already registered. Please login instead." });
     }
 
+    const safeShopName = shopName || "Barbershop " + Date.now().toString().slice(-4);
+    const safeOwnerName = ownerName || "Shop Owner";
     const hashedPassword = await bcrypt.hash(password || "password123", 10);
-    const shopId = shopName.toLowerCase().replace(/[^a-z0-9]/g, "-") + "-" + Date.now().toString().slice(-4);
+    const shopId = safeShopName.toLowerCase().replace(/[^a-z0-9]/g, "-") + "-" + Date.now().toString().slice(-4);
     const planType = requestedPlan && requestedPlan.includes("Enterprise")
       ? "Enterprise"
       : requestedPlan && requestedPlan.includes("Starter")
@@ -44,15 +53,18 @@ router.post("/register", async (req, res) => {
 
     const newShop = new Shop({
       shopId,
-      name: shopName,
-      ownerName,
+      name: safeShopName,
+      ownerName: safeOwnerName,
       email: email.toLowerCase(),
       password: hashedPassword,
-      phone,
+      phone: phone || "+880 1700-000000",
       city: city || "Dhaka",
-      address,
+      address: address || "Main Road, Dhaka",
       tradeLicenseNumber: tradeLicenseNumber || "TRD-2026-99999",
       nidNumber: nidNumber || "NID-2026-9999999",
+      category: category || "Barbershop",
+      tagline: tagline || "Executive Cuts, Beard Styling & Luxury Grooming",
+      coverImage: coverImage || "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop",
       plan: planType,
       status: "Pending Approval",
     });
@@ -68,6 +80,15 @@ router.post("/register", async (req, res) => {
         name: newShop.name,
         ownerName: newShop.ownerName,
         email: newShop.email,
+        phone: newShop.phone,
+        city: newShop.city,
+        address: newShop.address,
+        category: newShop.category,
+        tagline: newShop.tagline,
+        coverImage: newShop.coverImage,
+        tradeLicenseNumber: newShop.tradeLicenseNumber,
+        nidNumber: newShop.nidNumber,
+        plan: newShop.plan,
         status: newShop.status,
       },
     });

@@ -11,7 +11,7 @@ const BarberSchema = new mongoose.Schema(
     phone: { type: String },
     email: { type: String },
     status: { type: String, enum: ["Active", "Off-Duty", "Break"], default: "Active" },
-    photo: { type: String, default: "/images/barber-hero.png" },
+    photo: { type: String, default: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop" },
     rating: { type: Number, default: 5.0 },
     assignedServices: [{ type: String }],
     assignedPackages: [{ type: String }],
